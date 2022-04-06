@@ -134,9 +134,9 @@ app.post('/', upload.single('pdf'), async (req, res, next) => {
     'Expires': '0',
     'Surrogate-Control': 'no-store',
   });
-  res.download(finalPath, file.originalname);
-
-  next();
+  res.download(finalPath, file.originalname, () => {
+    next();
+  });
 }, (req, res) => {
   const folder = req.file?.destination;
 
