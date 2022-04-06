@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minify PDF</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      font-size: 22px;
+      color: #212121;
+    }
+
+    fieldset {
+      max-width: 400px;
+      margin: 0 auto;
+      border: 2px solid #212121;
+      border-radius: 4px;
+    }
+
+    fieldset p:first-of-type {
+      margin-top: 0;
+    }
+
+    fieldset p:last-of-type {
+      margin-bottom: 0;
+    }
+
+    input,
+    select {
+      font-size: 16px;
+      display: inline-block;
+      border: 1px solid #212121;
+      padding: 4px 6px;
+      background: #fafafa;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type="submit"] {
+      padding: 8px 12px;
+      background-color: #b2ebf2;
+    }
+  </style>
+</head>
+
+<body>
+  <form action="/" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>
+        <h1>Optimize PDF</h1>
+      </legend>
+
+      <p>
+        <label>
+          File:
+          <input required type="file" name="pdf" accept="application/pdf">
+        </label>
+      </p>
+      <p>
+        <label>
+          Compression:
+          <select required name="compression">
+            <option value="default" selected>Default</option>
+            <option value="best">Best</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </label>
+      </p>
+      <p style="text-align: right">
+        <input type="submit" value="Optimize">
+      </p>
+    </fieldset>
+  </form>
+</body>
+
+</html>
