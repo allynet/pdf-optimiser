@@ -43,11 +43,21 @@
       padding: 8px 12px;
       background-color: #b2ebf2;
     }
+
+    progress {
+      display: block;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 
 <body>
-  <form action="/" method="post" enctype="multipart/form-data">
+  <form id="form" action="/" method="post" enctype="multipart/form-data">
     <fieldset>
       <legend>
         <h1>Optimize PDF</h1>
@@ -56,13 +66,13 @@
       <p>
         <label>
           File:
-          <input required type="file" name="pdf" accept="application/pdf">
+          <input id="pdf" required multiple type="file" name="pdf" accept="application/pdf">
         </label>
       </p>
       <p>
         <label>
           Compression:
-          <select required name="compression">
+          <select id="compression" required name="compression">
             <option value="default" selected>Default</option>
             <option value="best">Best</option>
             <option value="medium">Medium</option>
@@ -73,8 +83,69 @@
       <p style="text-align: right">
         <input type="submit" value="Optimize">
       </p>
+
+      <progress class="hidden" id="progress" value="50" max="100"></progress>
     </fieldset>
   </form>
+
+  <script>
+    var $form = document.querySelector('#form');
+    var $formInputs = $form.querySelectorAll('input, select');
+    var $progress = document.querySelector('#progress');
+    var $pdf = document.querySelector('#pdf');
+    var $compression = document.querySelector('#compression');
+
+    $form.addEventListener('submit', handleSubmit);
+
+    function downloadBlob(blob, fileName) {
+      var a = document.createElement('a');
+      a.href = window.URL.createObjectURL(blob);
+      a.download = fileName;
+      a.dispatchEvent(new MouseEvent('click'));
+    }
+
+    function uploadFiles(formData, onProgress = function () { }) {
+      return new Promise((resolve) => {
+        var request = new XMLHttpRequest();
+
+        request.upload.addEventListener('progress', onProgress);
+
+        request.responseType = 'blob';
+
+        request.addEventListener('load', () => resolve(request.response));
+        request.addEventListener('error', () => null);
+
+        request.open('POST', '/');
+        request.send(formData);
+      });
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+
+      var formData = new FormData($form);
+
+      $formInputs.forEach(el => el.disabled = true);
+      $progress.classList.remove('hidden');
+      const response = await uploadFiles(formData, (event) => {
+        if (event.loaded === event.total) {
+          $progress.removeAttribute('value');
+          return;
+        }
+
+        $progress.value = event.loaded;
+        $progress.max = event.total;
+      });
+      $progress.classList.add('hidden');
+      $formInputs.forEach(el => el.disabled = false);
+
+      if (response) {
+        downloadBlob(response, 'optimized.zip');
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+    }
+  </script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 FROM node:16-alpine
 
-RUN apk update && apk add ghostscript
+RUN apk update && apk add ghostscript zip
 
 WORKDIR /app
 
